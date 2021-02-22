@@ -21,8 +21,8 @@ def main():
     x, _ = iter(mnist_train).next()
     print(f'x:{x.shape}')
 
-
-    model = AE()
+    device = torch.device('cuda')
+    model = AE().to(device)
     criteon = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
     print(model)
@@ -33,7 +33,7 @@ def main():
 
         for batchidx, (x, _) in enumerate(mnist_train):
             # [b, 1, 28, 28]
-            x = x
+            x = x.to(device)
 
             x_hat,_ = model(x)
             loss = criteon(x_hat, x)
@@ -47,7 +47,7 @@ def main():
         print(epoch, 'loss:', loss.item())
 
         x, _ = iter(mnist_test).next()
-        x = x
+        x = x.to(device)
         with torch.no_grad():
             x_hat, kld = model(x)
         viz.images(x, nrow=8, win='x', opts=dict(title='x'))
